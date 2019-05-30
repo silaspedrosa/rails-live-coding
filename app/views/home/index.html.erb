@@ -1,6 +1,13 @@
-<div class="row">
-  <h1>Home!</h1>
+<div class="row mt-5">
+  <h3>Caixa atual: <span id="cashBalance"><%= number_to_currency @cash_balance %></span></h3>
 </div>
 <div class="row">
-  <h3>Caixa: <span id="cashBalance"><%= number_to_currency @cash_balance %></span></h3>
+  <div class="col">
+    <%= line_chart @expenses_incomes_data, id: "expenses_income", prefix: "R$" %>
+  </div>
+</div>
+<div class="row mt-5">
+  <div class="col">
+    <%= column_chart @balance_data, id: "balance", prefix: "R$", ytitle: "Balanço" %>
+  </div>
 </div>

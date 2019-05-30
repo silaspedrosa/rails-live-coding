@@ -57,3 +57,4 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'sidekiq',  '4.1.2'
 
 gem 'devise'
+gem "chartkick"

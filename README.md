@@ -473,6 +473,132 @@ total_incomes = Income.sum(:value)
 OK! Now we need to make it look like currency with the helper `number_to_currency`:
 `<h3>Caixa: <%= number_to_currency @cash_balance %></h3>`
 
+### Charts
+Install the gem `chartkick` and restart your server. Then, add this
+```
+//= require chartkick
+//= require Chart.bundle
+```
+to `app/assets/javascripts/application.js`, right before `//= require_tree .`.
+
+In the home index action, we'll group the expenses by month and sum their values. The same will be done with the incomes. We must  normalize the data because it is possible that, in some month, no expenses or no incomes were registered, so there would be no  data. As we want to show them together, we need to fill with zeroes the empty months. Last but not least, we must sum the values from the prior two charts to result in the total balance chart.
+
+The home controller would be like this:
+```
+class HomeController < ApplicationController
+  def index
+    total_expenses = Expense.sum(:value)
+    total_incomes = Income.sum(:value)
+    @cash_balance = total_incomes - total_expenses
+
+    expenses_by_month = Expense.group("(extract(year from date))::integer").group('(EXTRACT(MONTH FROM date))::integer').sum(:value)
+    incomes_by_month = Income.group("(extract(year from date))::integer").group('(EXTRACT(MONTH FROM date))::integer').sum(:value)
+    normalize_charts_keys expenses_by_month, incomes_by_month
+    balance_by_month_map = {}
+
+    incomes_by_month.keys.each do |key|
+      balance_by_month_map[key] = incomes_by_month[key] - expenses_by_month[key]
+    end
+
+    prepared_expenses_by_month = prepare_keys(expenses_by_month)
+    prepared_incomes_by_month = prepare_keys(incomes_by_month)
+    prepared_balance_by_month = prepare_keys(balance_by_month_map)
+
+    @expenses_incomes_data = [
+      {name: "Receitas", data: prepared_incomes_by_month},
+      {name: "Despesas", data: prepared_expenses_by_month},
+    ]
+    @balance_data = prepared_balance_by_month
+
+    respond_to do |format|
+      format.html { render }
+      format.json { render json: { 
+        cash_balance: ActionController::Base.helpers.number_to_currency(@cash_balance),
+        expenses_incomes_data: @expenses_incomes_data,
+        balance_data: @balance_data
+       }}
+    end
+  end
+
+  private
+    def normalize_charts_keys(chart1, chart2)
+      chart1.keys.each do |key|
+        chart2[key] = 0 unless chart2.has_key? key
+      end
+      chart2.keys.each do |key|
+        chart1[key] = 0 unless chart1.has_key? key
+      end
+    end
+
+    def prepare_keys(hash)
+      months = %w(Jan Fev Mar Abr Mai Jun Jul Ago Set Out Nov Dez) 
+      hash
+        .keys
+        .sort
+        .map do |key|
+          value = hash[key]
+          ["#{months[key[1] - 1]}/#{key[0]}", value]
+        end
+    end
+end
+```
+
+And the view would have this code in order to actually show the charts:
+```
+<div class="row mt-5">
+  <h3>Caixa atual: <span id="cashBalance"><%= number_to_currency @cash_balance %></span></h3>
+</div>
+<div class="row">
+  <div class="col">
+    <%= line_chart @expenses_incomes_data, id: "expenses_income", prefix: "R$" %>
+  </div>
+</div>
+<div class="row mt-5">
+  <div class="col">
+    <%= column_chart @balance_data, id: "balance", prefix: "R$", ytitle: "Balanço" %>
+  </div>
+</div>
+``` 
+
+You should be able to see the charts now. However, they're not live yet.
+
+### Long polling
+For now, we'll stick to long polling as webockets are a bit trickier to implement and setup, specially in production. Long  polling consists of making requests from time to time. It's a simpler approach because it ends up wasting resources with requests that won't bring any new data.
+
+Create the file `app/assets/javascripts/home.js` and place the following code:
+```
+(function() {
+    'use strict';
+
+    function dashboardRequest() {
+        Rails.ajax({
+            url: '/',
+            type: 'get',
+            data: {},
+            dataType: 'json',
+            beforeSend: () => true,
+            success: (data) => {
+                try {
+                    const expensesIncome = Chartkick.charts["expenses_income"];
+                    const balance = Chartkick.charts["balance"];
+                    expensesIncome.updateData(data.expenses_incomes_data);
+                    balance.updateData(data.balance_data);
+                } catch (error) {
+                    console.error(error);
+                } finally {
+                    setTimeout(dashboardRequest, 1000);
+                }
+            },
+            error: (error) => console.log(error)
+        });
+    }
+    dashboardRequest();
+})()
+```
+It simply make a request that, in the end, sets a timeout to call itself again. In the success callback, it accesses the charts and updates their data.
+
+To test it, you can leave the home page open and open the expenses link in a new tab. If you add a  new expense, you'll see the chart changing right away.
+
 
 ### Troubleshooting
 If you ever face this issue while trying to bring the server up with `docker-compose up`:
