@@ -103,11 +103,6 @@ In a second terminal tab, run the devise generator:
 Follow the generator instructions:
 add `config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }` to `config/environments/development.rb`
 place `root to: "home#index"` inside de `do...end` block of the `config/routes.rb` file
-add to the `<body>` tag of `app/views/layouts/application.html.erb` the following tags:
-```
-<p class="notice"><%= notice %></p>
-<p class="alert"><%= alert %></p>
-```
 
 Stop the first terminal and start it again (when you change files in the `config` folder you need to restart the server)
 If you access the same url, you'll see some error about not having a `HomeController` constant. We just need to define one by creating the file `app/controllers/home_controller.rb` and placing the following code:
@@ -404,6 +399,15 @@ Let's improve the navigation for further pages and prepare the home page for the
 </div>
 ```
 For now, it's pointless, as we only have one route, but later on we'll more modules in our app.
+
+### Incomes module
+Let's leverege the magic of the rails scaffold and generate the complete module with:
+`rails g scaffold Income value:float date:date`
+If you try to access any page now, you get an error because you didn't run the migrations. Run them and the app will be back to normal.
+Let's add an entry to our navigation bar so we can access the newly created module:
+`<%= link_to "Receitas", incomes_path, class: current_page?(incomes_path) ? 'nav-link bg-primary text-light' : 'nav-link'  %>`
+
+Experiment taking a look at the new views and do some translations. Also, add `class="table"` to the table tag in the index view so you can have a bootstrap table.
 
 ### Troubleshooting
 If you ever face this issue while trying to bring the server up with `docker-compose up`:
