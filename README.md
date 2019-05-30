@@ -209,6 +209,185 @@ end
 Now, if you register a new user you'll be able to see their name in the home screen! 
 
 
+### A little bit of UI
+Let's improve just a little bit the look n' feel of the app. First, add the bootstrap files to the application layout:
+```
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+```
+Maybe you should store them in your own infrasctructure, maybe you should provide them from your own CDN, maybe you should just place direct links to their CDN. Do a little research about it!
+
+Rename `app/assets/stylesheets/application.css` to `app/assets/stylesheets/application.css.scss` so we can leverage the use o sass.
+
+Let's use the `Raleway` font just to try something new. To achieve that, include the font in your application layout header (again, read a little more to know the pros and cons about directly including fonts from external CDNs):
+`<link href="https://fonts.googleapis.com/css?family=Raleway:300,400,700&display=swap" rel="stylesheet">`
+
+Let's jump into our new application stylesheet (`app/assets/stylesheets/application.css.scss`) and prepare the ground for future work. 
+
+To the end of the file, add
+```
+$grey-color: #ebebeb;
+$white-color: white;
+$black-color: black;
+$base-color: $grey-color;
+$border-color: rgba(150, 150, 150, 0.5);
+$front-color: $white-color;
+
+.bg-base {
+    background-color: $base-color;
+}
+
+.bg-front {
+    background-color: $front-color;
+}
+```
+so we can establish some basic color variables and background coloring classes for later use. Then, basic html setup so we can make use of the whole screen:
+```
+body,
+html {
+    width: 100%;
+    height: 100%;
+}
+```
+Now, let's all elements use the font we included:
+```
+* {
+    font-family: 'Raleway', sans-serif;
+}
+```
+Then, define some basic utility classes:
+```
+.full-width {
+    width: 100%;
+}
+
+.full-height {
+    height: 100%;
+}
+
+.font-size-08 {
+    font-size: 0.8rem;
+}
+
+.font-size-12 {
+    font-size: 1.2rem;
+}
+```
+
+Now, let's improve our login page `app/views/devise/sessions/new.html.erb`:
+```
+<div class="full-width full-height container">
+  <div class="row justify-content-center">
+    <div class="container bg-front p-5" style="width: 600px">
+      <div class="row">
+        <div class="col">
+          <h2>LOG IN</h2>
+        </div>
+      </div>
+      <!-- form will go here -->
+      </div>
+  </div>
+</div>
+```
+This still doesn't do much, but we have setup the baseground for placing our form. The code for ther form is:
+```
+<%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: 'd-flex flex-column form' }) do |f| %>
+  <div class="field mt-3 full-width">
+    <%= f.label :email, class: 'font-size-12' %><br />
+    <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'full-width text-input' %>
+  </div>
+
+  <div class="field mt-3 full-width">
+    <%= f.label :password, class: 'font-size-12' %><br />
+    <%= f.password_field :password, autocomplete: "current-password", class: 'full-width text-input' %>
+  </div>
+
+  <% if devise_mapping.rememberable? %>
+    <div class="field mt-3 font-weight-light">
+      <%= f.check_box :remember_me %>
+      <%= f.label :remember_me, class: 'font-size-08' %>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= f.submit "Log in", class: 'btn btn-primary pl-5 pr-5 font-weight-bold' %>
+  </div>
+<% end %>
+
+<%= render "devise/shared/links" %>
+```
+Almost done! We just have to define some classes to style the fields:
+```
+.form .field .text-input {
+    height: 55px;
+    width: 100%;
+    border: 1px solid $border-color;
+}
+
+.form .field input[type="checkbox"] {
+    border: 1px solid $border-color !important;
+}
+
+.form .field .actions input[type="submit"] {
+    background-color: $black-color;
+    height: 2.5rem;
+}
+```
+Done! Nothing fancy, but it looks live already!
+Now, you can just simply repeat it all for the sign up form in `app/views/registrations/new.html.erb`:
+```
+<div class="full-width full-height container">
+  <div class="row justify-content-center">
+    <div class="container bg-front p-5" style="width: 600px">
+      <div class="row">
+        <div class="col">
+          <h2>SIGN UP</h2>
+        </div>
+      </div>
+
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'd-flex flex-column form' }) do |f| %>
+        <div class="field mt-3">
+          <%= f.label :first_name %><br />
+          <%= f.text_field :first_name, autofocus: true, autocomplete: "first_name", class: "text-input" %>
+        </div>
+
+        <div class="field mt-3">
+          <%= f.label :last_name %><br />
+          <%= f.text_field :last_name, autocomplete: "last_name", class: "text-input" %>
+        </div>
+
+        <div class="field mt-3">
+          <%= f.label :email %><br />
+          <%= f.email_field :email, autocomplete: "email", class: "text-input" %>
+        </div>
+
+        <div class="field mt-3">
+          <%= f.label :password %>
+          <% if @minimum_password_length %>
+          <em>(<%= @minimum_password_length %> characters minimum)</em>
+          <% end %><br />
+          <%= f.password_field :password, autocomplete: "new-password", class: "text-input" %>
+        </div>
+
+        <div class="field mt-3">
+          <%= f.label :password_confirmation %><br />
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "text-input" %>
+        </div>
+
+        <div class="actions">
+          <%= f.submit "Sign up", class: 'btn btn-primary pl-5 pr-5 font-weight-bold mt-5' %>
+        </div>
+      <% end %>
+
+      <%= render "devise/shared/links" %>
+    </div>
+  </div>
+</div>
+```
+
+
 
 ### Troubleshooting
 If you ever face this issue while trying to bring the server up with `docker-compose up`:

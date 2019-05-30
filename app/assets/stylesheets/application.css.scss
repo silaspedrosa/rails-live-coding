@@ -1,0 +1,70 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+
+$grey-color: #ebebeb;
+$white-color: white;
+$black-color: black;
+$base-color: $grey-color;
+$border-color: rgba(150, 150, 150, 0.5);
+$front-color: $white-color;
+.bg-base {
+    background-color: $base-color;
+}
+
+.bg-front {
+    background-color: $front-color;
+}
+
+* {
+    font-family: 'Raleway', sans-serif;
+}
+
+body,
+html {
+    width: 100%;
+    height: 100%;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.full-height {
+    height: 100%;
+}
+
+.font-size-08 {
+    font-size: 0.8rem;
+}
+
+.font-size-12 {
+    font-size: 1.2rem;
+}
+
+.form .field .text-input {
+    height: 55px;
+    width: 100%;
+    border: 1px solid $border-color;
+}
+
+.form .field input[type="checkbox"] {
+    border: 1px solid $border-color !important;
+}
+
+.form .field .actions input[type="submit"] {
+    background-color: $black-color;
+    height: 2.5rem;
+}
