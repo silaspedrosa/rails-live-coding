@@ -39,6 +39,20 @@
 =end%>
 
   <body class="bg-base">
-    <%= yield %>
+    <% if !user_signed_in? %>
+      <%= yield %>
+    <% else %>
+      <div class="container">
+        <div class="row justify-content-between">
+          <h4>Bem-vindo, <%= current_user.first_name %>!</h4>
+          <nav class="nav row">
+            <%= link_to "Home", root_path, class: current_page?(root_path) ? 'nav-link bg-primary text-light' : 'nav-link'  %>
+            <%= link_to "Receitas", incomes_path, class: current_page?(incomes_path) ? 'nav-link bg-primary text-light' : 'nav-link'  %>
+            <%= link_to('Sair', destroy_user_session_path, method: :delete, class: "nav-link") %>
+          </nav>
+        </div>
+        <%= yield %>
+      </div>
+    <% end %>
   </body>
 </html>
