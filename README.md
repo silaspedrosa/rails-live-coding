@@ -459,6 +459,21 @@ Run the migration and check out the result.
 
 For the generated table, experiment using the bootstrap classes `table table-striped`.
 
+### Dashboard
+Let's add the information about our overall cash balance in the home page:
+`<h3>Caixa: </h3>`
+But how can we place an actual value inside the html? We should get it from our controller, so  the view can be:
+`<h3>Caixa: <%= @cash_balance %></h3>`
+It still doesn't show because the variable is not being assigned yet. Go to the controller action in `app/controllers/home_controller.rb#index` and place the code:
+```
+total_expenses = Expense.sum(:value)
+total_incomes = Income.sum(:value)
+@cash_balance = total_incomes - total_expenses
+```
+OK! Now we need to make it look like currency with the helper `number_to_currency`:
+`<h3>Caixa: <%= number_to_currency @cash_balance %></h3>`
+
+
 ### Troubleshooting
 If you ever face this issue while trying to bring the server up with `docker-compose up`:
 ```
