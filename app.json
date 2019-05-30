@@ -1,0 +1,16 @@
+{
+    "name": "Livecoding",
+    "description": "Rails - www.capyba.com",
+    "NOTE": "postdeploy changes are NOT committed to the app image.",
+    "keywords": [
+        "dokku",
+        "rails",
+        "capyba.com"
+    ],
+    "scripts": {
+        "dokku": {
+            "predeploy": "rake db:migrate && rake assets:precompile",
+            "postdeploy": "cat capyba"
+        }
+    }
+}

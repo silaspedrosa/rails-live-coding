@@ -32,6 +32,7 @@ create the 'CHECKS' file to configure deploy checking waiting time and amount of
 create the 'docker-compose.yml' file to help orchestrate different containers
 create the 'DOKKU_SCALE' file to define the amount of resources needed to run the app
 create the 'Procfile' file for setting how to actually run the app in production
+create the 'app.json' file for configuring the post deploy scripts 
 ```
 
 Database setup:
@@ -137,7 +138,76 @@ After that, you'll be able to access the index page normally.
 Now, we must demand that the user has logged in before accessing the index page. To achieve that we must
 add `before_action :authenticate_user!` **after** the `protect_from_forgery with: :exception` line in `app/controllers/application_controller.rb`
 
-If you try to access the website, you'll get an error. As you were not authenticated yet, you were going to be redirected to the login page, but as we don't have that yet, we get an error.
+If you try to access the website, you'll get an error. Our last command added new things to `config/routes.tb`, so we need to restart the server first. After that, you'll see the login page.
+You'll also be able to check out the sign up page by following the link in the login page. If you fill the form and create a user, you'll be signed in as well and be redirected to the home page. Now we should create a sign out link! For that, you just need to place `<%= link_to('Sair', destroy_user_session_path, method: :delete) %>` in your index view.
+
+At any time, you can open a second terminal tab, access the container and check out all the routes defined in your app. You just need to run the command
+`rails routes`
+and try do understand the output. It's not as hard as it looks like! :)
+
+Everything should be working fine by now, but the user form in the sign up page doesn't include the fields `first_name` and `last_name`. If you search around yout project, you won't be able to find the view file that implements the page's HTML. Devise keeps default view files inside their own code, but they provide a simple way to override these views. Just run:
+`rails generate devise:views`
+and you'll see a bunch of new files implementing all the views regarding user management! Jump to `app/views/devise/registrations/new.html.erb` and edit the code to include the fields:
+```
+<h2>Sign up</h2>
+
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+  <%= render "devise/shared/error_messages", resource: resource %>
+
+  <div class="field">
+    <%= f.label :first_name %><br />
+    <%= f.text_field :first_name, autofocus: true, autocomplete: "first_name" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :last_name %><br />
+    <%= f.text_field :last_name, autofocus: true, autocomplete: "last_name" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :email %><br />
+    <%= f.email_field :email, autocomplete: "email" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :password %>
+    <% if @minimum_password_length %>
+    <em>(<%= @minimum_password_length %> characters minimum)</em>
+    <% end %><br />
+    <%= f.password_field :password, autocomplete: "new-password" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :password_confirmation %><br />
+    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "Sign up" %>
+  </div>
+<% end %>
+
+<%= render "devise/shared/links" %>
+```
+
+Cool! Now let's print the user's name in the home page so we can assure everything is working:
+```
+<%= link_to('Sair', destroy_user_session_path, method: :delete) %>
+<h4>Welcome, <%= current_user.first_name %>!</h4>
+<h1>Home!</h1>
+```
+Something is not right, because we still can't see the user's first name. Devise doesn't let you pass in any attributes you want in the user form. To allow more than the default ones (:email, :password and :password_confirmation), we'll to do some little thing in the application controller:
+Add `before_action :configure_permitted_parameters, if: :devise_controller?` right after the class definition.
+Add this to the end of the class definition:
+```
+protected
+
+def configure_permitted_parameters
+  devise_parameter_sanitizer.permit(:sign_up, keys: [:first_name, :last_name])
+end
+```
+Now, if you register a new user you'll be able to see their name in the home screen! 
+
 
 
 ### Troubleshooting
