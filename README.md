@@ -126,7 +126,18 @@ If you try one more time, you'll get another error complaining about the lack of
 ```
 
 Now you have a dummy app that has devis installed, no database tables nor Models and a dummy index page. We need to generate the `User` model in order to actually implement the authentication system. For that, we can do:
+`rails g devise user first_name last_name`
 
+This command will create `app/models/user.rb` defining the user model, i.e. tha ORM mapping for the users table in the database. It'll also add user and authtentication routes to `/config/routes.rb`. You'll be able to notice a new migration file inside the `db/migrate` folder describing the new table creation.
+
+Anytime you create a migration file, you must execute the migration before accessing the website again. So go to your second terminal tab, access the container and run the migrations:
+`rails db:migrate`
+After that, you'll be able to access the index page normally.
+
+Now, we must demand that the user has logged in before accessing the index page. To achieve that we must
+add `before_action :authenticate_user!` **after** the `protect_from_forgery with: :exception` line in `app/controllers/application_controller.rb`
+
+If you try to access the website, you'll get an error. As you were not authenticated yet, you were going to be redirected to the login page, but as we don't have that yet, we get an error.
 
 
 ### Troubleshooting
