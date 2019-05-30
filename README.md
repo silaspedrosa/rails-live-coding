@@ -383,7 +383,7 @@ Now, you can just simply repeat it all for the sign up form in `app/views/regist
 ```
 
 #### Navigation
-Let's improve the navigation for further pages and prepare the home page for the content part. Place this  in the home page view:
+Let's improve the navigation for further pages and prepare the home page for the content part. Place this in the home page view:
 ```
 <div class="container">
   <div class="row justify-content-between">
@@ -400,6 +400,19 @@ Let's improve the navigation for further pages and prepare the home page for the
 ```
 For now, it's pointless, as we only have one route, but later on we'll more modules in our app.
 
+Comment these lines in `app/assets/stylesheets/scaffolds.scss` because it makes the links really ugly:
+```
+// a {
+//   color: #000;
+//   &:visited {
+//     color: #666;
+//   }
+//   &:hover {
+//     color: #fff;
+//     background-color: #000;
+//   }
+// }
+
 ### Incomes module
 Let's leverege the magic of the rails scaffold and generate the complete module with:
 `rails g scaffold Income value:float date:date`
@@ -408,6 +421,43 @@ Let's add an entry to our navigation bar so we can access the newly created modu
 `<%= link_to "Receitas", incomes_path, class: current_page?(incomes_path) ? 'nav-link bg-primary text-light' : 'nav-link'  %>`
 
 Experiment taking a look at the new views and do some translations. Also, add `class="table"` to the table tag in the index view so you can have a bootstrap table.
+
+### Navigation bar in all screens
+In our application layout, we'll do some reasoning about the user being logged in or not. If it is, we'll draw the navigation bar and setup the space for inner content so the child views do not need to worry about his. If it's not logged in, we'll do nothing and delegate the rendering to the devise views. So, replace the body of the application layout for this:
+```
+<body class="bg-base">
+    <% if !user_signed_in? %>
+      <%= yield %>
+    <% else %>
+      <div class="container">
+        <div class="row justify-content-between">
+          <h4>Bem-vindo, <%= current_user.first_name %>!</h4>
+          <nav class="nav row">
+            <%= link_to "Home", root_path, class: current_page?(root_path) ? 'nav-link bg-primary text-light' : 'nav-link'  %>
+            <%= link_to "Receitas", incomes_path, class: current_page?(incomes_path) ? 'nav-link bg-primary text-light' : 'nav-link'  %>
+            <%= link_to('Sair', destroy_user_session_path, method: :delete, class: "nav-link") %>
+          </nav>
+        </div>
+        <%= yield %>
+      </div>
+    <% end %>
+  </body>
+```
+In our home page, let's just leave this:
+```
+<div class="row">
+  <h1>Home!</h1>
+</div>
+```
+
+### Expenses module
+Time for another module!
+`rails g scaffold Expense value:float date:date`
+Add a menu entry:
+`<%= link_to "Receitas", incomes_path, class: current_page?(incomes_path) ? 'nav-link bg-primary text-light' : 'nav-link'  %>`
+Run the migration and check out the result.
+
+For the generated table, experiment using the bootstrap classes `table table-striped`.
 
 ### Troubleshooting
 If you ever face this issue while trying to bring the server up with `docker-compose up`:

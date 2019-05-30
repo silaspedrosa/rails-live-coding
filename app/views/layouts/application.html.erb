@@ -48,6 +48,7 @@
           <nav class="nav row">
             <%= link_to "Home", root_path, class: current_page?(root_path) ? 'nav-link bg-primary text-light' : 'nav-link'  %>
             <%= link_to "Receitas", incomes_path, class: current_page?(incomes_path) ? 'nav-link bg-primary text-light' : 'nav-link'  %>
+            <%= link_to "Despesas", expenses_path, class: current_page?(expenses_path) ? 'nav-link bg-primary text-light' : 'nav-link'  %>
             <%= link_to('Sair', destroy_user_session_path, method: :delete, class: "nav-link") %>
           </nav>
         </div>
