@@ -90,6 +90,60 @@ Now it's time for the actual deploy:
 `git push production master:master`
 
 
+### Authentication
+
+Add the Devise gem to the Gemfile:
+`gem 'devise'`
+In the first terminal tab, stop the server and run `docker-compose build` again.
+Start the server again with `docker-compose up`
+
+In a second terminal tab, run the devise generator:
+`rails generate devise:install`
+Follow the generator instructions:
+add `config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }` to `config/environments/development.rb`
+place `root to: "home#index"` inside de `do...end` block of the `config/routes.rb` file
+add to the `<body>` tag of `app/views/layouts/application.html.erb` the following tags:
+```
+<p class="notice"><%= notice %></p>
+<p class="alert"><%= alert %></p>
+```
+
+Stop the first terminal and start it again (when you change files in the `config` folder you need to restart the server)
+If you access the same url, you'll see some error about not having a `HomeController` constant. We just need to define one by creating the file `app/controllers/home_controller.rb` and placing the following code:
+```
+class HomeController < ApplicationController
+end
+```
+
+If you try to acces the url again, you'll get another error complaining about not having the index action inside `HomeController`. We can solve that by defining it:
+```
+def index
+end
+```
+If you try one more time, you'll get another error complaining about the lack of templates. To solve that, put this code in `app/view/home/index.html.erb`:
+```
+<h1>Home!</h1>
+```
+
+Now you have a dummy app that has devis installed, no database tables nor Models and a dummy index page. We need to generate the `User` model in order to actually implement the authentication system. For that, we can do:
+
+
+
+### Troubleshooting
+If you ever face this issue while trying to bring the server up with `docker-compose up`:
+```
+app_1             | A server is already running. Check /app/tmp/pids/server.pid.
+app_1             | => Booting Puma
+app_1             | => Rails 5.1.7 application starting in development 
+app_1             | => Run `rails server -h` for more startup options
+app_1             | Exiting
+livecoding_app_1 exited with code 1
+```
+you just need to delete the pid file by running
+`rm tmp/pids/server.pid`
+
+
+
 This README would normally document whatever steps are necessary to get the
 application up and running.
 

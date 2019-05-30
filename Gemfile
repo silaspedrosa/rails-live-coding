@@ -55,3 +55,5 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # Simple, efficient background processing for Ruby.
 gem 'sidekiq',  '4.1.2'
+
+gem 'devise'
