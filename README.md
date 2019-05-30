@@ -387,7 +387,23 @@ Now, you can just simply repeat it all for the sign up form in `app/views/regist
 </div>
 ```
 
-
+#### Navigation
+Let's improve the navigation for further pages and prepare the home page for the content part. Place this  in the home page view:
+```
+<div class="container">
+  <div class="row justify-content-between">
+    <h4>Bem-vindo, <%= current_user.first_name %>!</h4>
+    <nav class="nav row">
+      <%= link_to "Home", root_path, class: current_page?(root_path) ? 'nav-link bg-primary text-light' : 'nav-link'  %>
+      <%= link_to('Sair', destroy_user_session_path, method: :delete, class: "nav-link") %>
+    </nav>
+  </div>
+  <div class="row">
+    <h1>Home!</h1>
+  </div>
+</div>
+```
+For now, it's pointless, as we only have one route, but later on we'll more modules in our app.
 
 ### Troubleshooting
 If you ever face this issue while trying to bring the server up with `docker-compose up`:
