@@ -25,6 +25,9 @@ git push -f
 ```
 
 Basic DevOps:
+Edit the line in `config/environments/production` to always enable public files serving: 
+`config.public_file_server.enabled = true`
+
 ```
 create the 'Dockerfile' file for managing the container
 create the 'capyba' file for the beautiful signature =D
