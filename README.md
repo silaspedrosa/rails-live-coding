@@ -90,6 +90,16 @@ Then, let's add the dokku production remote for the deploys:
 Now it's time for the actual deploy:
 `git push production master:master`
 
+#### Finishing up deploy settings
+When the deploy is done, the  deploy script has to test if the server is alive, so we implement this action in the `app/controllers/application_controller.rb`:
+```
+def check_deploy
+  render json: "deploy_successful"
+end
+```
+We also have to place this route in the end of `config/routes.rb`:
+`get "check_deploy", controller: 'application'`
+
 
 ### Authentication
 

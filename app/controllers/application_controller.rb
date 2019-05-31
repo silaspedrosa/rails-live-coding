@@ -3,6 +3,10 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :authenticate_user!
 
+  def check_deploy
+    render json: "deploy_successful"
+  end
+
   protected
 
   def configure_permitted_parameters
