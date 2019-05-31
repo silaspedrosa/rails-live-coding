@@ -57,7 +57,6 @@ production:
 
 Build from docker:
 ```
-add "gem 'sidekiq',  '4.1.2'" to Gemfile to install the background job library
 bundle install # do it outside docker in order to create a Gemfile.lock, but maybe just creating an empty Gemfile.lock would be enough
 docker-compose build
 ```

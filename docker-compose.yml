@@ -22,23 +22,5 @@ services:
       - "3000:3000"
     environment:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/livecoding_development
-      - REDIS_URL=redis://redis:6379
     depends_on:
       - db
-      - redis
-
-  redis:
-    image: redis:3-alpine
-    ports:
-      - "6379:6379"
-
-  sidekiq_worker:
-    build: .
-    command: sidekiq
-    volumes:
-      - .:/app
-    depends_on:
-      - app
-    environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/livecoding_development
-      - REDIS_URL=redis://redis:6379
