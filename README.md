@@ -425,6 +425,7 @@ Comment these lines in `app/assets/stylesheets/scaffolds.scss` because it makes 
 //     background-color: #000;
 //   }
 // }
+```
 
 ### Incomes module
 Let's leverege the magic of the rails scaffold and generate the complete module with:
