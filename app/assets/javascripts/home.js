@@ -10,8 +10,8 @@
             beforeSend: function() { return true; },
             success: function(data) {
                 try {
-                    const expensesIncome = Chartkick.charts["expenses_income"];
-                    const balance = Chartkick.charts["balance"];
+                    var expensesIncome = Chartkick.charts["expenses_income"];
+                    var balance = Chartkick.charts["balance"];
                     expensesIncome.updateData(data.expenses_incomes_data);
                     balance.updateData(data.balance_data);
                 } catch (error) {
