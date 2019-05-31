@@ -213,6 +213,8 @@ end
 ```
 Now, if you register a new user you'll be able to see their name in the home screen! 
 
+#### DevOps for future deploys
+Make sure you uncomment the  `config.secret_key = ...` line in the `config/initializers/devise.rb` file.
 
 ### A little bit of UI
 Let's improve just a little bit the look n' feel of the app. First, add the bootstrap files to the application layout:
