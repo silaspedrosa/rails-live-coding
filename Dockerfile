@@ -47,7 +47,7 @@ ENV TERM xterm
 ENV LANG C.UTF-8
 
 # Prevent bundler warnings; ensure that the bundler version executed is >= that which created Gemfile.lock
-RUN gem install bundler
+RUN gem install bundler -v 2.0.1
 
 # Use the Gemfiles as Docker cache markers. Always bundle before copying app src.
 # Install Deps
