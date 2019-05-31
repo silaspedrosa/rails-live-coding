@@ -28,7 +28,6 @@ Basic DevOps:
 ```
 create the 'Dockerfile' file for managing the container
 create the 'capyba' file for the beautiful signature =D
-create the 'CHECKS' file to configure deploy checking waiting time and amount of attempts
 create the 'docker-compose.yml' file to help orchestrate different containers
 create the 'DOKKU_SCALE' file to define the amount of resources needed to run the app
 create the 'Procfile' file for setting how to actually run the app in production
