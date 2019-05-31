@@ -7,8 +7,8 @@
             type: 'get',
             data: {},
             dataType: 'json',
-            beforeSend: () => true,
-            success: (data) => {
+            beforeSend: function() { return true; },
+            success: function(data) {
                 try {
                     const expensesIncome = Chartkick.charts["expenses_income"];
                     const balance = Chartkick.charts["balance"];
@@ -20,7 +20,7 @@
                     setTimeout(dashboardRequest, 1000);
                 }
             },
-            error: (error) => console.log(error)
+            error: function(error) { console.log(error); }
         });
     }
     dashboardRequest();
